@@ -2,28 +2,21 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from '@/components/Sidebar';
 import { TopBar } from '@/components/TopBar';
-import type { NavItem } from '@/lib/types';
 
-interface AppLayoutProps {
-  navItems: NavItem[];
-  roleLabel: string;
-  basePath: string;
-}
-
-export function AppLayout({ navItems, roleLabel, basePath }: AppLayoutProps) {
+export function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#f7f9fc]">
+    <div className="flex min-h-screen bg-[#f8fafc]">
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-slate-200 lg:block">
-        <Sidebar items={navItems} roleLabel={roleLabel} basePath={basePath} />
+        <Sidebar />
       </aside>
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-72 border-r border-slate-200 bg-white shadow-xl">
-            <Sidebar items={navItems} roleLabel={roleLabel} basePath={basePath} onNavigate={() => setMobileOpen(false)} />
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute left-0 top-0 h-full w-72 border-r border-slate-200 bg-white shadow-2xl">
+            <Sidebar onNavigate={() => setMobileOpen(false)} />
           </aside>
         </div>
       )}

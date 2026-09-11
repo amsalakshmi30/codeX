@@ -1,51 +1,58 @@
-export type Role = 'manager' | 'employee';
+export type SeverityLevel = 'None' | 'Low' | 'Medium' | 'High' | 'Not Applicable';
 
-export interface Meeting {
+export interface ScanResult {
   id: string;
-  title: string;
-  date: string;
-  time: string;
-  duration: string;
-  room: string;
-  organizer: string;
-  attendees: string[];
-  status: 'upcoming' | 'completed' | 'cancelled';
-  priority: 'high' | 'medium' | 'low';
-  agenda: string[];
+  is_leaf: boolean;
+  plant: string | null;
+  status: 'Healthy' | 'Diseased' | 'No Leaf';
+  disease: string | null;
+  severity: SeverityLevel;
+  confidence: number;
+  affected_percent: number | null;
+  top_class?: string;
+  all_scores?: Record<string, number>;
+  recommendations: string[];
+  urgency?: string;
+  organic_option?: string;
+  imageUrl?: string;
+  timestamp: string;
+  scanMode: 'single' | 'three-zone';
 }
 
-export interface Employee {
-  id: string;
+export interface ZoneItemResult {
+  zone: string;
+  expected_plant: string;
+  is_leaf: boolean;
+  status: 'Healthy' | 'Diseased' | 'No Leaf';
+  disease: string | null;
+  severity: SeverityLevel;
+  confidence: number;
+  affected_percent?: number | null;
+  recommendations?: string[];
+  urgency?: string;
+  cropped_url?: string;
+}
+
+export interface ThreeZoneResult {
+  preset: string;
+  zones: ZoneItemResult[];
+  summary: string;
+  timestamp: string;
+  imageUrl?: string;
+}
+
+export interface CropStat {
   name: string;
-  role: string;
-  email: string;
-  department: string;
-  status: 'active' | 'away' | 'offline';
-  avatarColor: string;
-  meetingsThisWeek: number;
-}
-
-export interface Room {
-  id: string;
-  name: string;
-  floor: string;
-  capacity: number;
-  amenities: string[];
-  status: 'available' | 'occupied' | 'maintenance';
-  utilization: number;
-}
-
-export interface Task {
-  id: string;
-  title: string;
-  dueDate: string;
-  priority: 'high' | 'medium' | 'low';
-  status: 'todo' | 'in-progress' | 'done';
-  relatedMeeting?: string;
+  tamilName?: string;
+  healthyCount: number;
+  diseasedCount: number;
+  commonDiseases: string[];
+  riskLevel: 'Low' | 'Moderate' | 'High';
 }
 
 export interface NavItem {
   label: string;
   path: string;
   icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
 }

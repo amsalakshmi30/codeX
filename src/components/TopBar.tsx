@@ -1,17 +1,28 @@
-import { Bell, History, Search } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Bell, ScanLine, ShieldCheck, Wifi, WifiOff } from 'lucide-react';
+import { checkBackendHealth } from '@/lib/api';
 
 interface TopBarProps {
   onMenuClick?: () => void;
 }
 
 export function TopBar({ onMenuClick }: TopBarProps) {
+  const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    checkBackendHealth().then((res) => {
+      setBackendOnline(res.online);
+    });
+  }, []);
+
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between gap-6 border-b border-slate-200 bg-white px-4 sm:px-8">
+    <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 sm:px-8">
       <div className="flex items-center gap-3">
         {onMenuClick && (
           <button
             onClick={onMenuClick}
-            className="rounded-lg p-2 text-slatey hover:bg-slate-100 lg:hidden"
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
             aria-label="Open menu"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -21,46 +32,38 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             </svg>
           </button>
         )}
-        <form className="hidden w-full max-w-md sm:block" role="search">
-          <label className="sr-only" htmlFor="search">
-            Search
-          </label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slatey" />
-            <input
-              id="search"
-              type="search"
-              placeholder="Search meetings, rooms, people..."
-              className="h-10 w-full rounded-lg border-0 bg-[#f2f4f7] py-2.5 pl-10 pr-4 text-sm text-slatey placeholder:text-slatey focus:outline-none focus:ring-2 focus:ring-brand/30"
-            />
-          </div>
-        </form>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-slate-500 hidden sm:inline">
+            Status:
+          </span>
+          {backendOnline === null ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-600">
+              Checking API...
+            </span>
+          ) : backendOnline ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Cloud API Online
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-700" title="API running in responsive client-side mode">
+              <span className="h-2 w-2 rounded-full bg-amber-500" />
+              Demo / Standby Mode
+            </span>
+          )}
+        </div>
       </div>
 
-      <nav className="flex shrink-0 items-center gap-3" aria-label="Quick actions">
-        <button
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-slatey hover:bg-slate-100"
-          aria-label="Recent activity"
+      <div className="flex items-center gap-3">
+        <Link
+          to="/scanner/single"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition"
         >
-          <History className="h-[18px] w-[18px]" />
-        </button>
-        <button
-          className="relative flex h-10 w-10 items-center justify-center rounded-lg text-slatey hover:bg-slate-100"
-          aria-label="Notifications"
-        >
-          <Bell className="h-[18px] w-[18px]" />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
-        </button>
-        <div className="flex items-center gap-2 rounded-lg border border-slate-200 px-2 py-1.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-xs font-semibold text-white">
-            SC
-          </div>
-          <div className="hidden text-left sm:block">
-            <p className="text-xs font-semibold leading-4 text-ink">Sarah Chen</p>
-            <p className="text-[10px] leading-3 text-slatey">Product Manager</p>
-          </div>
-        </div>
-      </nav>
+          <ScanLine className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">New Scan</span>
+        </Link>
+      </div>
     </header>
   );
 }
